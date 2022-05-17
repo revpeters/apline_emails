@@ -1,0 +1,156 @@
+<html>
+<head>
+    <style>
+        * {
+            font-family: "Calibri",sans-serif;
+        }
+        h1 {
+            font-size: 13.0pt;
+            color: #00A1E0;
+        }
+        p {
+            font-size: 11.0pt;
+            color: black;
+        }
+        .emailText {
+            font-weight: bold;
+        }
+    </style>
+        <link rel="stylesheet" href="https://unpkg.com/trix@2.0.0-alpha.1/dist/trix.css"></link>
+        <script src="https://unpkg.com/trix@2.0.0-alpha.1/dist/trix.umd.js"></script>
+        <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="js/updated_apps_data.js"></script>
+        <script src="js/nav.js"></script>
+        <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div x-data="component">
+        <div x-html="nav"></div>
+
+        <div>
+            <select id="appDropdown" 
+                    x-model="application" 
+                    x-init="$watch('application', (value) => grabTeamAppInfo(value.split(',')))">
+                <template x-for="team in teams">
+                    <optgroup x-bind:label="team.name" id="teamName">
+                        <template x-for="app in team.apps">
+                            <option :value="team.name + ',' + team.email + ',' + app.name + ',' + '(' + app.nar_id + ')'" 
+                                    x-text="app.name + ' ' + '(' + app.nar_id + ')' "></option>
+                        </template>
+                    </optgroup>
+                </template>
+            </select>
+        </div>
+
+        <div>
+            <input id="start_time" type="datetime-local" x-model="change_start" placeholder="DD/MM/YYYY HH:MM">
+            <input id="end_time" type="datetime-local" x-model="change_end" placeholder="DD/MM/YYYY HH:MM">
+
+            <template x-for="(zone, index) in timezones">
+                <div >
+                    <label>
+                        <input type="radio" x-bind:value="timezones[index]" x-model="timezone">
+                        <span x-text="timezones[index]"></span>
+                    </label>
+                </div>  
+            </template>
+        </div>
+
+        <div>
+            <input type="text" x-model="change_ticket" placeholder="Change Ticket Number">
+            <textarea x-model="change_summary" cols="50" rows="2" placeholder="Change Ticket Summary"></textarea>
+            <!-- <textarea x-model="change_description" cols="50" rows="4" placeholder="Change Ticket Description"></textarea> -->
+            <div 
+                x-init="$refs.trix.editor.loadHTML(change_description)"
+                @trix-change="change_description = $refs.input.value"
+            >
+                <input id="x" type="hidden" x-ref="input">
+                <trix-editor x-model="change_description" x-ref="trix" input="x"></trix-editor>
+            </div>
+            
+
+        </div>
+        <div><br>
+            <img src="imgs/notification_banner.jpg" alt="notification_banner">
+            <h1><span x-text="teamName" ></span> Maintenance Notification</h1>
+            <p>
+                <strong><span x-text="change_ticket"></span></strong> : <span x-text="teamName" ></span> : <span x-text="appName + ' ' + appNarID" ></span> - <span x-text="change_summary"></span>
+            </p>
+            <h1>What is happening and when?</h1>
+            <p>
+                <div x-text="appName + ' ' + appNarID + ' - '" ></div> <div x-html="change_description" ></div>
+            </p>
+            <p>
+                Start Time: <span class="emailText" x-text="change_start"></span>  <span x-text="timezone"></span> <br>
+                End Time: <span class="emailText" x-text="change_end"></span>  <span x-text="timezone"></span></p> 
+            </p>
+            
+            <h1>How does it impact me?</h1>
+            <p>
+                <span x-text="appName + ' ' + appNarID" ></span> application will not be available during the implementation window
+            </p>
+            <h1>What do I need to do?</h1>
+            <p>
+                There is no action required from users and this notification is to make the users aware of the activity.
+                Please plan and manage your activities in accordance with the above mentioned scheduled time.
+            </p>
+            <h1>Support and Further Information</h1>
+            <p>For any further information or escalations - please drop an email to <a :href="'mailto:'+teamEmail"><span x-text="teamEmail" ></span></a></p>
+
+            
+        </div>
+
+    </div>
+    
+</body>
+<script>
+    config = {
+        enableTime: true,
+        allowInput: true,
+        time_24hr: true,
+        minDate: "today",
+        dateFormat: "d-M-Y H:i:S",
+    },
+    config_end = {
+        enableTime: true,
+        allowInput: true,
+        time_24hr: true,
+        dateFormat: "d-M-Y H:i:S",
+        
+    }
+    flatpickr("#start_time", config);
+    flatpickr("#end_time", config_end);
+</script>
+<script>
+    document.addEventListener('alpine:init', function () {
+        Alpine.data('component', function () {
+            return {
+                nav: nav_bar,
+                teamName: this.$persist(''),
+                teamEmail: this.$persist(''),
+                appName: this.$persist(''),
+                appNarID: this.$persist(''),
+                application: this.$persist(''),
+                timezone: this.$persist(''),
+                timezones: ['EST', 'BST', 'CET'],
+                start_date_picker: this.$persist(''),
+                end_date_picker: this.$persist(''),
+                change_start: this.$persist(''),
+                change_end: this.$persist(''),
+                change_ticket: this.$persist(''),
+                change_summary: this.$persist(''),
+                change_description: this.$persist(''),
+                grabTeamAppInfo(teamAppInfo) {
+                    this.teamName = teamAppInfo[0]
+                    this.teamEmail = teamAppInfo[1]
+                    this.appName = teamAppInfo[2]
+                    this.appNarID = teamAppInfo[3]
+                },
+            }
+        })
+    })
+</script>
+</html>

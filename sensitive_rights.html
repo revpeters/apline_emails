@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            * {
+                font-family: "Calibri",sans-serif;
+            }
+            b {
+                font-size: 11.0pt;
+                color: #00A1E0
+            }
+            p {
+                font-size: 11.0pt;
+                color: black
+            }
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                text-align: center;
+                padding: 5px;
+            }
+        </style>
+        <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+        <script src="js/nav.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- <div id="nav"></div> -->
+
+    <div x-data="component()">
+        <div x-html="nav"></div>
+        <div>
+            <textarea x-model="username" @keyup.enter="addName()" rows="10" cols="30"></textarea>
+            <button @click="addName()">Add Email</button>
+            <p>alter session set current_schema = irsadmin40;</p>
+            <p>select u.OPERA_USER_ID,o.EMAIL_ADDRESS from opera_user o,user_profile u
+                    where u.OPERA_USER_ID=o.ID
+                    and o.EMAIL_ADDRESS in (
+                        <template x-for="email in emails">
+                            <span>
+                                <span x-text="'\'' + email + '\''"></span>
+                                <template x-if="email != emails[emails.length - 1]">
+                                    <span>,</span>
+                                </template>
+                            </span>
+                        </template>
+                    );
+            </p>
+        </div>
+        <div>
+            <textarea x-model="opera_id" @keyup.enter="addOperaID()" cols="30" rows="10"></textarea>
+            <button @click="addOperaID()" >Add OperaID</button>
+            <p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Sensitive Loss</th>
+                            <th>Escalation View</th>
+                            <th>Edit Division</th>
+                            <th>Edit ORM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="opera_id, index in opera_ids">
+                            <tr>
+                                <td><span x-text="opera_ids[index]"></span></td>
+                                <td><input type="checkbox" x-bind:value="opera_ids[index]" x-model="sensitive"></td>
+                                <td><input type="checkbox" x-bind:value="opera_ids[index]" x-model="escalaton_view"></td>
+                                <td><input type="checkbox" x-bind:value="opera_ids[index]" x-model="edit_div"></td>
+                                <td><input type="checkbox" x-bind:value="opera_ids[index]" x-model="edit_orm"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </p>
+            <p>
+                --update sensitive_loss<br>
+                Update irsadmin40.user_profile set sensitive_loss='Y' where opera_user_id in (<template x-for="user in sensitive">
+                    <span>
+                        <span x-text="'\'' + user + '\''"></span>
+                        <template x-if="user != sensitive[sensitive.length - 1]">
+                            <span>,</span>
+                        </template>
+                    </span>
+                </template>);
+            </p>
+            <p>
+                --View<br>
+                Update irsadmin40.user_profile set escalation_right_id=2 where opera_user_id in 
+                (<template x-for="user in escalaton_view">
+                    <span>
+                        <span x-text="'\'' + user + '\''"></span>
+                        <template x-if="user != escalaton_view[escalaton_view.length - 1]">
+                            <span>,</span>
+                        </template>
+                    </span>
+                </template>);
+            </p>
+            <p>
+                --Edit Div<br>
+                Update irsadmin40.user_profile set escalation_right_id=3 where opera_user_id in 
+                (<template x-for="user in edit_div">
+                    <span>
+                        <span x-text="'\'' + user + '\''"></span>
+                        <template x-if="user != edit_div[edit_div.length - 1]">
+                            <span>,</span>
+                        </template>
+                    </span>
+                </template>);
+            </p>
+            <p>
+                --Edit ORM<br>
+                Update irsadmin40.user_profile set escalation_right_id=4 where opera_user_id in 
+                (<template x-for="user in edit_orm">
+                    <span>
+                        <span x-text="'\'' + user + '\''"></span>
+                        <template x-if="user != edit_orm[edit_orm.length - 1]">
+                            <span>,</span>
+                        </template>
+                    </span>
+                </template>);
+            </p>
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('alpine:init', function () {
+        Alpine.data('component', function () {
+            return {
+                nav: nav_bar,
+                emails: [],
+                username:'',
+                usernames: [],
+                opera_id: '',
+                opera_ids: [],
+                sensitive: [],
+                escalaton_view: [],
+                edit_div: [],
+                edit_orm: [],
+                addName() {
+                    if (this.username == '') {
+                        return
+                    } else {
+                        this.emails = this.emails
+                        this.username = this.username.replace(/^\s*[\r\n]/gm,"")
+                        usernames = this.username.split("\n").filter(function(el) {return el.length != 0})
+                        
+                        usernames.forEach((uName) => {
+                            if (uName != '') {
+                                this.emails.push(uName)
+                            }
+                        })
+                        this.username = ''
+                    }
+                },
+                addOperaID() {
+                    if (this.opera_id == '') {
+                        return
+                    } else {
+                        this.opera_id = this.opera_id.replace(/^(?:[\t ]*(?:\r?\n|\r))+/gm,"")
+                        this.opera_ids = this.opera_ids
+
+                        this.opera_id.split("\n").filter(function(el) {return el.length != 0}).forEach((item) => {
+                            this.opera_ids.push(item)
+                        })
+
+                        this.opera_id = ''
+                    }
+                }
+            }
+        })
+    })
+</script>
+
+</html>

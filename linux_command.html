@@ -1,0 +1,84 @@
+<html>
+<head>
+    <style>
+        * {
+            font-family: "Calibri",sans-serif;
+        }
+        h1 {
+            font-size: 13.0pt;
+            color: #00A1E0;
+        }
+        p {
+            font-size: 11.0pt;
+            color: black;
+        }
+        .emailText {
+            font-weight: bold;
+        }
+    </style>
+        <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="js/updated_apps_data.js"></script>
+        <script src="js/commands.js"></script>
+        <script src="js/nav.js"></script>
+        <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div 
+        x-data="component"
+        x-init="randomCMD()"
+    >
+        <div x-html="nav"></div>
+        <div>
+            <p><strong>Name</strong></p>
+            <p x-text="cmd.name + ' - ' + cmd.description"></p>
+            <p x-text="cmd.name + ' [options] ' + cmd.argument"></p>
+
+            <p><strong>Options</strong></p>
+            <template x-for="option in cmd.options">
+                <div>
+                    <p x-text="option.short + ', ' + option.long + ' ' + option.arg"></p>
+                    <p x-text="option.description"></p>
+                </div>
+            </template>
+
+            <p><strong>Configuration</strong></p>
+            <template x-for="cfg in cmd.configuration">
+                <div>
+                    <p x-text="cfg.path"></p>
+                    <p x-text="cfg.variables"></p>
+                </div>
+            </template>
+
+            <p><strong>Files</strong></p>
+            <template x-for="file in cmd.files">
+                <div>
+                    <p x-text="file.path"></p>
+                    <p x-text="file.description"></p>
+                </div>
+            </template>
+            
+        </div>
+    </div>
+    
+</body>
+<script>
+    document.addEventListener('alpine:init', function () {
+        Alpine.data('component', function () {
+            return {
+                nav: nav_bar,
+                cmd: {},
+                randomCMD() {
+                    const randomIndex = Math.floor(Math.random() * commands.length)
+                    this.cmd = commands[randomIndex]
+                    console.log(randomIndex)
+                },
+            }
+        })
+    })
+</script>
+</html>
+

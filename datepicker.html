@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  
+
+  <div x-data="{hours: '',minutes: '',seconds: ''}"
+    x-init="setInterval(function() {
+      hours = ('0' + new Date().getHours()).slice(-2)
+      minutes = ('0' + new Date().getMinutes()).slice(-2)
+      seconds = ('0' + new Date().getSeconds()).slice(-2)
+      }, 1000)">
+    <span x-text="hours+':'+minutes+':'+seconds"></span>
+    <div x-data="{
+        now_time: '',
+        gmt_tz: '',
+        gmt_tz_printed: ''
+      }"
+      x-init="setInterval(function(){
+        now_time = new Date().getTime(),
+        gmt_tz = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Europe/London',
+        timeZoneName: 'short',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',}),
+        gmt_tz_printed = gmt_tz.format(now_time)}, 1000)">
+      <span x-text="gmt_tz_printed"></span>
+    </div>
+    <div x-data="{
+      now_time: '',
+      gmt_tz: '',
+      gmt_tz_printed: ''
+      }"
+      x-init="setInterval(function(){
+        now_time = new Date().getTime(),
+        gmt_tz = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        timeZoneName: 'short',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',}),
+        gmt_tz_printed = gmt_tz.format(now_time)}, 1000)">
+      <span x-text="gmt_tz_printed"></span>
+    </div>
+    <div x-data="{
+      now_time: '',
+      gmt_tz: '',
+      gmt_tz_printed: ''
+      }"
+      x-init="setInterval(function(){
+        now_time = new Date().getTime(),
+        gmt_tz = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/Berlin',
+        timeZoneName: 'short',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',}),
+        gmt_tz_printed = gmt_tz.format(now_time)}, 1000)">
+      <span x-text="gmt_tz_printed"></span>
+    </div>
+  </div>
+
+
+</body>
+</html>

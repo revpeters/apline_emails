@@ -1,0 +1,91 @@
+<html>
+<head>
+    <style>
+        * {
+            font-family: "Calibri",sans-serif;
+        }
+        b {
+            font-size: 11.0pt;
+            color: #00A1E0
+        }
+        p {
+            font-size: 11.0pt;
+            color: black
+        }
+    </style>
+    <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="js/apps.js"></script>
+    <script src="js/nav.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div x-data="component">
+        <div x-html="nav"></div>
+        <button @click="toggle(true)">SL3 Support</button>
+        <button @click="toggle(false)">Business Tester</button>
+        <br>
+        <select x-model="app" x-bind:selected="app">
+            <template x-for="app in apps">
+                <option x-bind:value="app" x-text="app"></option>
+            </template>
+        </select>
+        <input type="date" x-model="date" id="date" placeholder="DD/MM/YYYY">
+        <input type="text" x-model="drName">
+        <br>
+    
+        <div x-show="open" x-transition>
+            <p><strong>Subject:</strong> <span x-text="drName"></span>-<span x-text="drDate"></span> [<span x-text="app"></span>] | SL3 Availability</p>
+
+            <p>Hello,</p>
+            
+            <p><b x-text="app"></b> is in scope of the upcoming DR Test <b x-text="drName"></b>-<b x-text="drDate"></b>. Can you please let us know who from SL3 will be available for support during this activity (Name and Contact Number).</p>
+            
+            <p>Date of the DR-> <b x-text="drDate"></b></p>
+        </div>
+
+
+        <div x-show="!open" x-transition>
+            <p><strong>Subject:</strong> <span x-text="drName"></span>-<span x-text="drDate"></span> [<span x-text="app"></span>] | Business Tester Availability</p>
+
+            <p>Hello,</p>
+
+            <p><b x-text="app"></b> is in scope of the upcoming DR Test <b x-text="drName"></b>-<b x-text="drDate"></b>. During this time, a business tester will need to perform the test cases listed in the Business Test Script.</p>
+
+            <p>We are requesting you confirm your availability to perform the tests during the DR Test, or nominate someone who will be available to do so.</p>
+    
+            <p>Along with the confirmation of your availability, kindly provide your contact details (Name, Mobile number) which will help us communicate more easily at the time of DR activity.</p>
+
+            <p>Date of the DR-> <b x-text="drDate"></b></p>   
+        </div>
+        
+    </div>
+</body>
+<script>
+    document.addEventListener('alpine:init', function () {
+        Alpine.data('component', function () {
+            return {
+                nav: nav_bar,
+                open: false,
+                app: this.$persist(''),
+                apps: apps_list,
+                date: this.$persist(''),
+                drDate: this.$persist(''),
+                drName: this.$persist('location-location-name'),
+                toggle(btn) {
+                    this.open = btn
+                    this.open ? this.btnText = 'SL3 Support' : this.btnText = 'Business Tester'
+                    const d = new Date(date.value.replace(/-/g, '\/'))
+                    const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+                    const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+                    const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+
+                    this.drDate = `${da}-${mo}-${ye}`
+                },
+                
+            }
+    })})
+</script>
+
+</html>

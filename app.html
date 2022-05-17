@@ -1,0 +1,118 @@
+<html>
+<head>
+    <style>
+        * {
+            font-family: "Calibri",sans-serif;
+        }
+        b {
+            font-size: 11.0pt;
+            color: #00A1E0
+        }
+        p {
+            font-size: 11.0pt;
+            color: black
+        }
+
+    </style>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div w3-include-html="templates/nav.html"></div>
+    <div x-data="component()">
+        <button @click="sl3_toggle()">SL3 Support</button>
+        <button @click="bTester_toggle()">Business Tester</button>
+        <br>
+        <select x-model="app">
+            <template x-for="app in apps">
+                <option x-bind:value="app" x-text="app"></option>
+            </template>
+        </select>
+        <input type="date" x-model="date" id="date">
+        <input type="text" x-model="drName">
+        <br>
+    
+        <div x-show="sl3" @click.outside="sl3 = false" x-transition>
+            <p>Subject: <span x-text="drName"></span>-<span x-text="drDate"></span> [<span x-text="app"></span>] | SL3 Availability</p>
+
+            <p>Hello,</p>
+            
+            <p><b x-text="app"></b> is in scope of the upcoming DR Test <b x-text="drName"></b>-<b x-text="drDate"></b>. Can you please let us know who from SL3 will be available for support during this activity (Name and Contact Number).</p>
+            
+            <p>Date of the DR-> <b x-text="drDate"></b></p>
+        </div>
+
+
+        <div x-show="bTester" @click.outside="bTester = false" x-transition>
+            <p>Subject: <span x-text="drName"></span>-<span x-text="drDate"></span> [<span x-text="app"></span>] | Business Tester Availability</p>
+
+            <p>Hello,</p>
+
+            <p><b x-text="app"></b> is in scope of the upcoming DR Test <b x-text="drName"></b>-<b x-text="drDate"></b>. During this time, a business tester will need to perform the test cases listed in the Business Test Script.</p>
+
+            <p>We are requesting you confirm your availability to perform the tests during the DR Test, or nominate someone who will be available to do so.</p>
+    
+            <p>Along with the confirmation of your availability, kindly provide your contact details (Name, Mobile number) which will help us communicate more easily at the time of DR activity.</p>
+
+            <p>Date of the DR-> <b x-text="drDate"></b></p>   
+        </div>
+        
+    </div>
+</body>
+<script>
+    w3.includeHTML()
+    function component() {
+        return {
+            sl3: false,
+            bTester: false,
+            app: '',
+            apps: [
+                'db-IRS (21611-1)', 
+                'eBCM - Workflow (35655-1)', 
+                'db-Risk Tableau (139117-1)', 
+                'db-Score (21560-1)', 
+                'db-Opera-Data Repository & dbMarple (29625-1)', 
+                'RASAR (100874-1)', 
+                'db-GFMS (92673-1)', 
+                'BCS Control Centre (126156-1)', 
+                'NPA-NTA Reputational Risk (21455-1)', 
+                'SAS Platform-STARS (110635-1)', 
+                'Enterprise Risk Portfolio Management (116692-1)', 
+                'MARS (NMA) (22991-1)', 
+                'db-Guardian (70574-1)', 
+                'Risk ID Aggregation Tool (125034-1)', 
+                'Monitor Control Framework-RDARR-Portal (106454-1)', 
+                'db-Rating-Core (54768-2)', 
+                'db-Rating-ASD (54768-2)', 
+                'db-RDD Rating Details Database (26173-1)', 
+                'Credit Default Engine (26380-1)', 
+                'db-Aqua (29147-1)', 
+                'db-ACE (37210-1)'
+            ],
+            date: 'mm-dd-yyyy',
+            drDate: '',
+            drName: 'location-location-name',
+            month: '',
+            sl3_toggle() {
+                this.sl3 = ! this.sl3
+                const d = new Date(date.value.replace(/-/g, '\/'))
+                const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+                const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+                const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+
+                this.drDate = `${da}-${mo}-${ye}`
+            },
+            bTester_toggle() {
+                this.bTester = ! this.bTester
+                const d = new Date(date.value.replace(/-/g, '\/'))
+                const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+                const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+                const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+
+                this.drDate = `${da}-${mo}-${ye}`
+            }
+        }
+    }
+</script>
+</html>

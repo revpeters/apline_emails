@@ -1,0 +1,425 @@
+<html>
+<head>
+    <style>
+        * {
+            font-family: "Calibri",sans-serif;
+        }
+        h1 {
+            font-size: 13.0pt;
+            color: #00A1E0;
+        }
+        p {
+            font-size: 11.0pt;
+            color: black;
+        }
+        .emailText {
+            font-weight: bold;
+        }
+        table, th, td {
+            width: 850px;
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 2px 10px;
+        }
+        textarea {
+            border: none;
+            width: 100%;
+            resize: both;
+            overflow: hidden;
+        }
+        span {
+            white-space: pre-wrap;
+        }
+    </style>
+        <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.7.0/dist/cdn.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="js/apps.js"></script>
+        <script src="js/nav.js"></script>
+        <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div x-data="component">
+        <div x-html="nav"></div>
+        <div id="emailBody" x-ref="emailBody">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 26%;">Topic</th>
+                        <th class="nfr-text">NFR</th>
+                        <th>ERM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr id="status">
+                        <td>All Apps status</td>
+                        <td id="nfr">
+                            <span >Status - </span>
+                            <span id="statusColor" 
+                                x-model="nfrStatus" 
+                                x-text="nfrStatus" 
+                                @click="
+                                    nfrStatus = nextColor($el.style['background']),
+                                    $el.style['background'] = nfrStatus
+                                " 
+                                style="background: green; text-transform: uppercase;">
+                            </span>
+                        </td>
+                        <td id="erm">
+                            <span >Status - </span>
+                            <span id="statusColor" 
+                                x-model="ermStatus" 
+                                x-text="ermStatus" 
+                                @click="
+                                    ermStatus = nextColor($el.style['background']),
+                                    $el.style['background'] = ermStatus
+                                    " 
+                                style="background: green; text-transform: uppercase;">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr id="geneos">
+                        <td>GENEOS Alerts</td>
+                        <td id="nfr">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                                 
+                                x-show="!isEditingCell['geneos'][0]" 
+                                x-text="geneos[0]"></span>
+                            <textarea type="text" 
+                                x-model="geneos[0]"
+                                x-show="isEditingCell['geneos'][0]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="nfrGeneos"></textarea>
+                        </td>
+                        <td id="erm">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                                 
+                                x-show="!isEditingCell['geneos'][1]" 
+                                x-text="geneos[1]"></span>
+                            <textarea type="text" 
+                                x-model="geneos[1]"
+                                x-show="isEditingCell['geneos'][1]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermGeneos"></textarea>
+                        </td>
+                    </tr>
+                    <tr id="p3c">
+                        <td>P3C’s</td>
+                        <td id="nfr">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                                 
+                                x-show="!isEditingCell['p3c'][0]" 
+                                x-text="p3c[0]"></span>
+                            <textarea type="text" 
+                                x-model="p3c[0]"
+                                x-show="isEditingCell['p3c'][0]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="nfrP3C"></textarea>
+                        </td>
+                        <td id="erm">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                                 
+                                x-show="!isEditingCell['p3c'][1]" 
+                                x-text="p3c[1]"></span>
+                            <textarea type="text" 
+                                x-model="p3c[1]"
+                                x-show="isEditingCell['p3c'][1]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermP3C"></textarea>
+                        </td>
+                    </tr>
+                    <tr id="prio">
+                        <td>Priority INC to be handled</td>
+                        <td id="nfr">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                                 
+                                x-show="!isEditingCell['prio'][0]" 
+                                x-text="prio[0]"></span>
+                            <textarea type="text" 
+                                x-model="prio[0]"
+                                x-show="isEditingCell['prio'][0]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="nfrPrio"></textarea>
+                        </td>
+                        <td id="erm">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                             
+                                x-show="!isEditingCell['prio'][1]" 
+                                x-text="prio[1]"></span>
+                            <textarea type="text" 
+                                x-model="prio[1]"
+                                x-show="isEditingCell['prio'][1]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermPrio"></textarea>
+                        </td>
+                    </tr>
+                    <tr id="task">
+                        <td>Task handover</td>
+                        <td id="nfr">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                             
+                                x-show="!isEditingCell['task'][0]" 
+                                x-text="task[0]"></span>
+                            <textarea type="text" 
+                                x-model="task[0]"
+                                x-show="isEditingCell['task'][0]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="nfrTask"></textarea>
+                        </td>
+                        <td id="erm">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "                             
+                                x-show="!isEditingCell['task'][1]" 
+                                x-text="task[1]"></span>
+                            <textarea type="text" 
+                                x-model="task[1]"
+                                x-show="isEditingCell['task'][1]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermTask"></textarea>
+                        </td>
+                    </tr>
+                    <tr id="inc">
+                        <td>INC to be checked and handled.</td>
+                        <td id="nfr">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "  
+                                x-show="!isEditingCell['inc'][0]" 
+                                x-text="inc[0]"></span>
+                            <textarea type="text" 
+                                x-model="inc[0]"
+                                x-show="isEditingCell['inc'][0]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="nfrINC"></textarea>
+                        </td>
+                        <td id="erm">
+                            <span @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                "  
+                                x-show="!isEditingCell['inc'][1]" 
+                                x-text="inc[1]"></span>
+                            <textarea type="text" 
+                                x-model="inc[1]"
+                                x-show="isEditingCell['inc'][1]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermINC"></textarea>
+                        </td>
+                    </tr>
+                    <tr id="comments">
+                        <td>Comments</td>
+                        <td id="nfr">
+                            <span 
+                                @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                " 
+                                x-show="!isEditingCell['comments'][0]" 
+                                x-text="comments[0]" ></span>
+                            <textarea type="text" 
+                                x-model="comments[0]"
+                                x-show="isEditingCell['comments'][0]"
+                                @click.away="console.log('Clicked away from text input'), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermComments"></textarea>
+                        </td>
+                        <td id="erm">
+                            <span 
+                                @click.prevent 
+                                @dblclick="
+                                    row = $event.target.parentElement.parentElement.id,
+                                    column = $event.target.parentElement.id,
+                                    focusTarget = $event.target.nextElementSibling,
+                                    toggleEditingCell(row,column,focusTarget)
+                                " 
+                                x-show="!isEditingCell['comments'][1]" 
+                                x-text="comments[1]"></span>
+                            <textarea 
+                                x-model="comments[1]"
+                                x-show="isEditingCell['comments'][1]"
+                                @click.away="console.log('Clicked away from text input', $el), toggleCellOff(row,column)"
+                                @keydown.down="toggleCellOff(row,column)"
+                                @keydown.shift.enter="toggleCellOff(row,column)"
+                                @keyup="$el.style.height = calcHeight($el.value)"
+                                id="ermComments"></textarea>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        
+        <button @click="sendEmail()">Prep Email</button>
+
+
+    </div>
+    
+</body>
+<script>
+    document.addEventListener('alpine:init', function () {
+        Alpine.data('component', function () {
+            return {
+                row: '',
+                column: '',
+                focusTarget: '',
+                nav: nav_bar,
+                geneos: ['N/A','N/A'],
+                p3c: ['N/A','N/A'],
+                prio: ['N/A','N/A'],
+                task: ['N/A','N/A'],
+                inc: ['N/A','N/A'],
+                comments: ['nfr comments','erm comments'],
+                isEditingCell: {
+                    status: [false,false],
+                    geneos: [false,false],
+                    p3c: [false,false],
+                    prio: [false,false],
+                    task: [false,false],
+                    inc: [false,false],
+                    comments: [false,false]
+                },
+                nfrStatus: 'green',
+                ermStatus: 'green',
+                colors: ['green','yellow','red'],
+                sendEmail() {
+                    function getDay(offset) {
+                        function nth(n){return["st","nd","rd"][((n+90)%100-10)%10-1]||"th"};
+                        month = new Date().toLocaleDateString('en-us', {month: 'short'})
+                        day = new Date().getDate() + offset
+                        //day = new Date().toLocaleDateString('en-us', {day: 'numeric'})
+                        return day + nth(day) + ' ' + month
+                    };
+                    let today = getDay(0)
+                    let tomorrow = getDay(1)
+                    let subject = 'NFR/ERM :: US - APAC Shift Handover ' + today + ' -> ' + tomorrow
+                    window.open('mailto:ert_nfr_support@list.db.com?subject='+subject)
+                },
+                calcHeight(value) {
+                    let lineBreaks = (value.match(/\n/g) || []).length
+                    let newHeight = 20 + lineBreaks * 20
+                    return newHeight.toString() + 'px'
+                },
+                nextColor(currentColor) {
+                    nextIndex = this.colors.indexOf(currentColor) + 1
+                    if (!this.colors.indexOf(currentColor) || nextIndex % 3) {
+                        return this.colors[nextIndex]
+                    } else {
+                        return this.colors[0]
+                    }
+                },
+                toggleCellOff(r,col) {
+                    console.log("Modify cell editing from: " + this.isEditingCell[this.row][this.column])
+                    this.isEditingCell[this.row][this.column] = !this.isEditingCell[this.row][this.column];
+                    console.log("To: "+ this.isEditingCell[this.row][this.column])
+                    console.log(this.isEditingCell)
+                },
+                toggleEditingCell(r,col,ft) {
+                    console.log(r,col,ft)
+                    col != 'nfr' ? this.column = 1 : this.column = 0
+
+                    console.log("Modify cell editing from: " + this.isEditingCell[this.row][this.column])
+                    this.isEditingCell[this.row][this.column] = !this.isEditingCell[this.row][this.column];
+                    console.log("To: "+ this.isEditingCell[this.row][this.column])
+
+                    if (this.isEditingCell[this.row][this.column]) {
+                        this.$nextTick(() => {
+                            ft.focus();
+                        });
+
+                    } else {
+                        this.row = ''
+                        this.column = ''
+                    }
+                    
+                },
+            }
+        })
+    })
+</script>
+</html>

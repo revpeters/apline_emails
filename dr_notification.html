@@ -1,0 +1,139 @@
+<html>
+<head>
+    <style>
+        * {
+            font-family: "Calibri",sans-serif;
+        }
+        h1 {
+            font-size: 13.0pt;
+            color: #00A1E0;
+        }
+        p {
+            font-size: 11.0pt;
+            color: black;
+        }
+        .emailText {
+            font-weight: bold;
+        }
+    </style>
+    <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="js/apps.js"></script>
+    <script src="js/nav.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div x-data="component()">
+        <div x-html="nav"></div>
+        <br>
+        <template x-for="(app, index) in apps">
+            <div>
+                <label>
+                    <input type="checkbox" x-bind:value="apps[index]" x-model="selectedApps">
+                    <span x-text="apps[index]"></span>
+                </label>
+            </div>  
+        </template>
+
+
+        <input type="date" x-model="start_date_picker" id="start_date_picker" placeholder="DD/MM/YYYY" x-on:change="start_toggle()"><input type="time" id="startTime" x-model="startTime"> <br>
+        <input type="date" x-model="end_date_picker" id="end_date_picker" placeholder="DD/MM/YYYY" x-on:change="end_toggle()"><input type="time" id="endTime" x-model="endTime"><br>
+        <input type="text" x-model="drName">
+        <br>
+        <p><strong>SUBJECT</strong>: Disaster Recovery Maintenance Notification: NFR Applications participating in <span x-text="drName"></span>-<span x-text="drDate"></span></p>
+    
+        <div><br>
+            <img src="imgs/notification_banner.jpg" alt="notification_banner">
+            <h1>NFR  Maintenance Notification</h1>
+            <p>
+                <strong>
+                    <template x-for="app in selectedApps">
+                        <span x-text="app + ' '"></span>
+                    </template>
+                    are participating in <span class="emailText" x-text="drName"></span>-<span class="emailText" x-text="drDate"></span> DR activity scheduled on <span class="emailText" x-text="drDate"></span> to <span class="emailText"x-text="endDate"></span>.
+                </strong>
+            </p>
+            <h1>What is happening and when?</h1>
+            <p>
+                The above mentioned application are participating in the <span class="emailText" x-text="drName"></span>-<span class="emailText" x-text="drDate"></span> DR activity 
+                scheduled from <span class="emailText" x-text="drDate"></span> to <span class="emailText" x-text="endDate"></span> and will not be available for access during that weekend.
+            </p>
+            <p>Start Time: <span class="emailText" x-text="drDate"></span> <span class="emailText" x-text="startTime"></span> BST <br>
+            End Time: <span class="emailText" x-text="endDate"></span> <span class="emailText" x-text="endTime"></span> BST</p> 
+            </p>
+            <p>
+                Objectives of the DR test are mentioned below –
+
+                <ul>
+                    <li>Recover all Businesses, IT Infrastructure systems/components, applications and external dependencies that are in scope.</li>
+                    <li>Prove availability of in-scope servers and databases to be restored within the RTO(Run Time Objective).</li>
+                    <li>Ability to recover appropriate data networks and connections.</li>
+                    <li>Verify Infrastructure’s ability to manage and control the recovery processes.</li>
+                    <li>Verify the Applications’ ability to resume delivery of services comparable or better than their Recovery Time Objective.</li>
+                    <li>Identify issues for future improvement for disaster recovery and business continuity.</li>
+                    <li>Successfully restore the environments at the completion of the disaster recovery test within the agreed time frame.</li>
+                    <li>Confirm the availability of designated RPO (Recovery Point Objective) for each in-scope application.</li>
+                    <li>Confirm designated RPO can be achieved.</li>
+                    <li>Restore the in-scope applications to production readiness.</li>
+                    <li>Confirm the integrity and completeness of all application & infrastructure DR plans.</li>
+                    <li>Prove ability to access in-scope applications from all locations including offshore sites.</li> 
+                    <li>Identify systems and infrastructure limitations that, given the test scope, would not be available or would be at risk, and understand the business implications.</li>
+                </ul>
+            </p>
+            <h1>How does it impact me?</h1>
+            <p>
+                The applications will not be available for access over the weekend from <span class="emailText" x-text="drDate"></span> – <span class="emailText" x-text="endDate"></span>. 
+                Below is a high level plan of the DR exercise over the weekend.
+            </p>
+            <h1>What do I need to do?</h1>
+            <p>
+                There is no action required from users and this notification is to make the users aware of the activity.
+                Please plan and manage your activities in accordance with the DR scheduled time.
+            </p>
+            <h1>Support and Further Information</h1>
+            <p>For any further information or escalations - please drop an email to <a href="mailto:support-mailbox.nfr@db.com">support-mailbox.nfr@db.com</a></p>
+
+            
+        </div>
+
+
+        
+    </div>
+</body>
+<script>
+    document.addEventListener('alpine:init', function () {
+        Alpine.data('component', function () {
+            return {
+                nav: nav_bar,
+                app: '',
+                apps: apps_list,
+                start_date_picker: this.$persist(''),
+                end_date_picker: this.$persist(''),
+                selectedApps: this.$persist([]),
+                drDate: this.$persist(''),
+                endDate: this.$persist(''),
+                startTime: this.$persist(''),
+                endTime: this.$persist(''),
+                drName: this.$persist(''),
+                start_toggle() {
+                    const d = new Date(start_date_picker.value.replace(/-/g, '\/'))
+                    const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+                    const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+                    const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+
+                    this.drDate = `${da}-${mo}-${ye}`
+                },
+                end_toggle() {
+                    const d = new Date(end_date_picker.value.replace(/-/g, '\/'))
+                    const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+                    const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+                    const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+
+                    this.endDate = `${da}-${mo}-${ye}`
+                },
+            }
+        })
+    })
+</script>
+</html>
